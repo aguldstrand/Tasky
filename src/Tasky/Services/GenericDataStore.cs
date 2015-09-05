@@ -6,71 +6,62 @@ using System.Linq;
 
 namespace Tasky.Services
 {
-    public class GenericDataStore<T> : IDataStore<T>
+    public class IdentityWrapper<TModel>
     {
-        private readonly string root;
+        public int Id { get; }
+        public TModel Value { get; }
 
-        public GenericDataStore(IHostingEnvironment hostEnv)
+        public IdentityWrapper(int id, TModel value)
         {
-            var typeName = typeof(T).FullName;
-
-            this.root = Path.Combine(hostEnv.WebRootPath, "../data", typeName);
-            Directory.CreateDirectory(root);
-        }
-
-        public IEnumerable<IdentityWrapper<T>> Get()
-        {
-            return Directory.EnumerateDirectories(root)
-                .Select(p => new IdentityWrapper<T>(
-                    id: int.Parse(Path.GetFileName(p)),
-                    value: JsonConvert.DeserializeObject<T>(File.ReadAllText(Path.Combine(p, "value.json")))));
-        }
-
-        public IdentityWrapper<T> Get(int id)
-        {
-            return new IdentityWrapper<T>(
-                    id: id,
-                    value: JsonConvert.DeserializeObject<T>(File.ReadAllText(Path.Combine(root, id.ToString(), "value.json"))));
-        }
-
-        public void Add(T value)
-        {
-            var id = Directory.EnumerateDirectories(root)
-                .Select(Path.GetFileName)
-                .Concat(new[] { "0" })
-                .Max(int.Parse) + 1;
-
-            var itemPath = Path.Combine(root, id.ToString(), "value.json");
-            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
-            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
-        }
-
-        public void Update(int id, T value)
-        {
-            var itemPath = Path.Combine(root, id.ToString(), "value.json");
-            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
-        }
-
-        public void Remove(int id)
-        {
-            var itemPath = Path.Combine(root, id.ToString(), "value.json");
-            Directory.Delete(itemPath, true);
+            this.Id = id;
+            this.Value = value;
         }
     }
 
-    public class Id<T> { }
-    public class Id<T1, T2> { }
-    public class Id<T1, T2, T3> { }
-    public class Id<T1, T2, T3, T4> { }
-
-    public class IdentityWrapper<T>
+    public class IdentityWrapper<TParent1, TModel>
     {
         public int Id { get; }
-        public T Value { get; }
+        public int ParentId1 { get; }
+        public TModel Value { get; }
 
-        public IdentityWrapper(int id, T value)
+        public IdentityWrapper(int parentId1, int id, TModel value)
         {
             this.Id = id;
+            this.ParentId1 = parentId1;
+            this.Value = value;
+        }
+    }
+
+    public class IdentityWrapper<TParent1, TParent2, TModel>
+    {
+        public int Id { get; }
+        public int ParentId1 { get; }
+        public int ParentId2 { get; }
+        public TModel Value { get; }
+
+        public IdentityWrapper(int parentId1, int parentId2, int id, TModel value)
+        {
+            this.Id = id;
+            this.ParentId1 = parentId1;
+            this.ParentId2 = parentId2;
+            this.Value = value;
+        }
+    }
+
+    public class IdentityWrapper<TParent1, TParent2, TParent3, TModel>
+    {
+        public int Id { get; }
+        public int ParentId1 { get; }
+        public int ParentId2 { get; }
+        public int ParentId3 { get; }
+        public TModel Value { get; }
+
+        public IdentityWrapper(int parentId1, int parentId2, int parentId3, int id,TModel value)
+        {
+            this.Id = id;
+            this.ParentId1 = parentId1;
+            this.ParentId2 = parentId2;
+            this.ParentId3 = parentId3;
             this.Value = value;
         }
     }

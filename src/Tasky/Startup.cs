@@ -21,8 +21,8 @@ namespace Tasky
         // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<Services.IDataStore<Services.Project>, Services.GenericDataStore<Services.Project>>();
-            services.AddTransient<Services.IDataStore<Services.Issue>, Services.GenericDataStore<Services.Issue>>();
+            services.AddTransient<Services.IDataStore<Services.Project>, Services.CommonDataStore<object, object, object, Services.Project>>();
+            services.AddTransient<Services.IDataStore<Services.Project, Services.Issue>, Services.CommonDataStore<Services.Project, object, object, Services.Issue>>();
 
             services.AddMvc();
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.

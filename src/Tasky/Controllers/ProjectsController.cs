@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
 using Tasky.Services;
-using System;
 
 namespace Tasky.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects")]
     public class ProjectsController : Controller
     {
         private readonly IDataStore<Project> store;
@@ -16,9 +15,9 @@ namespace Tasky.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<IdentityWrapper<Project>> Get()
+        public IdentityWrapper<Project>[] Get()
         {
-            return store.Get();
+            return store.GetAll();
         }
 
         [HttpGet("{id}")]

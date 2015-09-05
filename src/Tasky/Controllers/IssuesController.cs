@@ -1,48 +1,47 @@
 ﻿using Microsoft.AspNet.Mvc;
-using System;
 using System.Collections.Generic;
 using Tasky.Services;
 
 namespace Tasky.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects/{projectId}/issues")]
     public class IssuesController
     {
-        private readonly IDataStore<Issue> store;
+        private readonly IDataStore<Project, Issue> store;
 
-        public IssuesController(IDataStore<Issue> store)
+        public IssuesController(IDataStore<Project, Issue> store)
         {
             this.store = store;
         }
 
         [HttpGet]
-        public IEnumerable<IdentityWrapper<Issue>> Get()
+        public IdentityWrapper<Project, Issue>[] Get(int projectId)
         {
-            return store.Get();
+            return store.GetAll(projectId);
         }
 
         [HttpGet("{id}")]
-        public IdentityWrapper<Issue> Get(int id)
+        public IdentityWrapper<Project, Issue> Get(int projectId, int id)
         {
-            return store.Get(id);
+            return store.Get(projectId, id);
         }
 
         [HttpPost]
-        public void Post([FromBody]Issue value)
+        public void Post(int projectId, [FromBody]Issue value)
         {
-            store.Add(value);
+            store.Add(projectId, value);
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Issue value)
+        public void Put(int projectId, int id, [FromBody]Issue value)
         {
-            store.Update(id, value);
+            store.Update(projectId, id, value);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(int projectId, int id)
         {
-            store.Remove(id);
+            store.Remove(projectId, id);
         }
     }
 }

@@ -27,8 +27,7 @@ namespace Tasky
             services.AddTransient<IDataStore<Project, Sprint>, CommonDataStore<Project, Sprint>>();
             services.AddTransient<IDataStore<Project, Sprint, Issue>, CommonDataStore<Project, Sprint, Issue>>();
             services.AddTransient<IDataStore<Project, Sprint, Issue, Comment>, CommonDataStore<Project, Sprint, Issue, Comment>>();
-
-            services.AddTransient<IDataStore<Attachment>, CommonDataStore<Attachment>>();
+            services.AddTransient<IDataStore<Project, Sprint, Issue, Attachment>, CommonDataStore<Project, Sprint, Issue, Attachment>>();
 
             services.AddTransient<IDataStore<User>, CommonDataStore<User>>();
             services.AddTransient<IDataStore<UserGroup>, CommonDataStore<UserGroup>>();

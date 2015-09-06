@@ -10,6 +10,7 @@ using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
 using Tasky.Services;
 using Tasky.Models;
+using Tasky.Controllers;
 
 namespace Tasky
 {
@@ -31,6 +32,12 @@ namespace Tasky
 
             services.AddTransient<IDataStore<User>, CommonDataStore<User>>();
             services.AddTransient<IDataStore<UserGroup>, CommonDataStore<UserGroup>>();
+
+            services.AddTransient<ProjectsController>();
+            services.AddTransient<SprintsController>();
+            services.AddTransient<IssuesController>();
+            services.AddTransient<CommentsController>();
+            services.AddTransient<AttachmentsController>();
 
             services.AddMvc();
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.

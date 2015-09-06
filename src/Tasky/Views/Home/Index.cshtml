@@ -1,9 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    // ViewBag.Title = "Home Page";
-}
+﻿@model Tasky.ViewModels.Home.Index
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,20 +10,21 @@
     <div class="leftCol">
         <h1>Tasky</h1>
         <ul class="projectList">
-            <li class="active">
-                <a href="#">Projekt 1</a>
-            </li>
-            <li>
-                <a href="#">Projekt 2</a>
-            </li>
-            <li>
-                <a href="#">Projekt 3</a>
-                <ul class="sprintList">
-                    <li><a href="#">Sprint 1</a></li>
-                    <li class="active"><a href="#">Sprint 2</a></li>
-                    <li><a href="#">Sprint 3</a></li>
-                </ul>
-            </li>
+            @foreach (var project in Model.Projects)
+            {
+                <li class="@(Model.Project == project.Id ? "active" : "")" data-project="@project.Id">
+                    <a href="#">@project.Value.Name</a>
+                    @if (Model.Project == project.Id)
+                    {
+                        <ul class="sprintList">
+                            @foreach (var sprint in Model.Sprints)
+                            {
+                                <li class="@(Model.Sprint == sprint.Id ? "active" : "")" data-sprint="@sprint.Id"><a href="#">@sprint.Value.Name</a></li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
         </ul>
         <a class="addButton" href="#">Add Project</a>
     </div>

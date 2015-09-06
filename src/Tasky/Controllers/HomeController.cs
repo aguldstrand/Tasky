@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNet.Mvc;
+using System.Collections.Immutable;
+using Tasky.Models;
+using Tasky.Services;
+using Tasky.ViewModels.Home;
 
 namespace Tasky.Controllers
 {
     [Route("/")]
     public class HomeController : Controller
     {
-        /*
         private readonly ProjectsController projects;
         private readonly SprintsController sprints;
         private readonly IssuesController issues;
@@ -20,12 +23,18 @@ namespace Tasky.Controllers
             this.comments = comments;
             this.attachments = attachments;
         }
-        */
 
         [HttpGet]
         public IActionResult Index(int? project, int? sprint)
         {
-            return View();
+            var outp = new Index(
+                project: project,
+                sprint: sprint,
+                projects: projects.Get(),
+                sprints: project == null ? ImmutableArray<IdentityWrapper<Project, Sprint>>.Empty : sprints.Get(project.Value),
+                issues: project == null || sprint == null ? ImmutableArray<IdentityWrapper<Project, Sprint, Issue>>.Empty :issues.Get(project.Value, sprint.Value));
+
+            return View(outp);
         }
     }
 }

@@ -5,37 +5,37 @@ using Tasky.Models;
 
 namespace Tasky.Controllers
 {
-    [Route("api/projects")]
+    [Route("api/user-groups")]
     [ValidateModel]
-    public class ProjectsController : Controller
+    public class UserGroupsController : Controller
     {
-        private readonly IDataStore<Project> store;
+        private readonly IDataStore<UserGroup> store;
 
-        public ProjectsController(IDataStore<Project> store)
+        public UserGroupsController(IDataStore<UserGroup> store)
         {
             this.store = store;
         }
 
         [HttpGet]
-        public IdentityWrapper<Project>[] Get()
+        public IdentityWrapper<UserGroup>[] Get()
         {
             return store.GetAll();
         }
 
         [HttpGet("{id}")]
-        public IdentityWrapper<Project> Get(int id)
+        public IdentityWrapper<UserGroup> Get(int id)
         {
             return store.Get(id);
         }
 
         [HttpPost]
-        public void Post([FromBody]Project value)
+        public void Post([FromBody]UserGroup value)
         {
             store.Add(value);
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]Project value)
+        public void Put(int id, [FromBody]UserGroup value)
         {
             store.Update(id, value);
         }

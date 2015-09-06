@@ -1,47 +1,49 @@
 ﻿using Microsoft.AspNet.Mvc;
-using System.Collections.Generic;
+using Tasky.Filters;
+using Tasky.Models;
 using Tasky.Services;
 
 namespace Tasky.Controllers
 {
-    [Route("api/projects/{projectId}/issues")]
-    public class IssuesController
+    [Route("api/projects/{projectId}/sprints/{sprintId}/issues")]
+    [ValidateModel]
+    public class IssuesController : Controller
     {
-        private readonly IDataStore<Project, Issue> store;
+        private readonly IDataStore<Project, Sprint, Issue> store;
 
-        public IssuesController(IDataStore<Project, Issue> store)
+        public IssuesController(IDataStore<Project, Sprint, Issue> store)
         {
             this.store = store;
         }
 
         [HttpGet]
-        public IdentityWrapper<Project, Issue>[] Get(int projectId)
+        public IdentityWrapper<Project, Sprint, Issue>[] Get(int projectId, int sprintId)
         {
-            return store.GetAll(projectId);
+            return store.GetAll(projectId, sprintId);
         }
 
         [HttpGet("{id}")]
-        public IdentityWrapper<Project, Issue> Get(int projectId, int id)
+        public IdentityWrapper<Project, Sprint, Issue> Get(int projectId, int sprintId, int id)
         {
-            return store.Get(projectId, id);
+            return store.Get(projectId, sprintId, id);
         }
 
         [HttpPost]
-        public void Post(int projectId, [FromBody]Issue value)
+        public void Post(int projectId, int sprintId, [FromBody]Issue value)
         {
-            store.Add(projectId, value);
+            store.Add(projectId, sprintId, value);
         }
 
         [HttpPut("{id}")]
-        public void Put(int projectId, int id, [FromBody]Issue value)
+        public void Put(int projectId, int sprintId, int id, [FromBody]Issue value)
         {
-            store.Update(projectId, id, value);
+            store.Update(projectId, sprintId, id, value);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int projectId, int id)
+        public void Delete(int projectId, int sprintId, int id)
         {
-            store.Remove(projectId, id);
+            store.Remove(projectId, sprintId, id);
         }
     }
 }

@@ -8,6 +8,8 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
+using Tasky.Services;
+using Tasky.Models;
 
 namespace Tasky
 {
@@ -21,8 +23,13 @@ namespace Tasky
         // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<Services.IDataStore<Services.Project>, Services.CommonDataStore<object, object, object, Services.Project>>();
-            services.AddTransient<Services.IDataStore<Services.Project, Services.Issue>, Services.CommonDataStore<Services.Project, object, object, Services.Issue>>();
+            services.AddTransient<IDataStore<Project>, CommonDataStore<Project>>();
+            services.AddTransient<IDataStore<Project, Sprint>, CommonDataStore<Project, Sprint>>();
+            services.AddTransient<IDataStore<Project, Sprint, Issue>, CommonDataStore<Project, Sprint, Issue>>();
+            services.AddTransient<IDataStore<Project, Sprint, Issue, Comment>, CommonDataStore<Project, Sprint, Issue, Comment>>();
+
+            services.AddTransient<IDataStore<User>, CommonDataStore<User>>();
+            services.AddTransient<IDataStore<UserGroup>, CommonDataStore<UserGroup>>();
 
             services.AddMvc();
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.

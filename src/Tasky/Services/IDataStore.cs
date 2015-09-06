@@ -1,17 +1,12 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
 namespace Tasky.Services
 {
-    public interface IModel { }
-    public interface IModel<TParent1> { }
-    public interface IModel<TParent1, TParent2> { }
-    public interface IModel<TParent1, TParent2, TParent3> { }
 
     public interface IDataStore<TModel>
     {
@@ -49,11 +44,7 @@ namespace Tasky.Services
         void Remove(int parentId1, int parentId2, int parentId3, int id);
     }
 
-    public class CommonDataStore<TParent1, TParent2, TParent3, TModel>
-        : IDataStore<TModel>,
-        IDataStore<TParent1, TModel>,
-        IDataStore<TParent1, TParent2, TModel>,
-        IDataStore<TParent1, TParent2, TParent3, TModel>
+    public class CommonDataStore<TModel> : IDataStore<TModel>
     {
         private readonly string root;
 
@@ -65,63 +56,6 @@ namespace Tasky.Services
         public void Add(TModel value)
         {
             var path = Path.Combine(root,
-                typeof(TModel).ToString());
-
-            Directory.CreateDirectory(path);
-
-            var id = Directory.GetDirectories(path)
-                .Select(Path.GetFileName)
-                .Concat(new[] { "0" })
-                .Max(int.Parse) + 1;
-
-            var itemPath = Path.Combine(path, id.ToString(), "value.json");
-            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
-            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
-        }
-
-        public void Add(int parentId1, TModel value)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TModel).ToString());
-
-            Directory.CreateDirectory(path);
-
-            var id = Directory.GetDirectories(path)
-                .Select(Path.GetFileName)
-                .Concat(new[] { "0" })
-                .Max(int.Parse) + 1;
-
-            var itemPath = Path.Combine(path, id.ToString(), "value.json");
-            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
-            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
-        }
-
-        public void Add(int parentId1, int parentId2, TModel value)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TModel).ToString());
-
-            Directory.CreateDirectory(path);
-
-            var id = Directory.GetDirectories(path)
-                .Select(Path.GetFileName)
-                .Concat(new[] { "0" })
-                .Max(int.Parse) + 1;
-
-            var itemPath = Path.Combine(path, id.ToString(), "value.json");
-            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
-            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
-        }
-
-        public void Add(int parentId1, int parentId2, int parentId3, TModel value)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TParent3).FullName, parentId3.ToString(),
                 typeof(TModel).ToString());
 
             Directory.CreateDirectory(path);
@@ -148,6 +82,62 @@ namespace Tasky.Services
                 .ToArray();
         }
 
+        public IdentityWrapper<TModel> Get(int id)
+        {
+            var path = Path.Combine(root,
+                typeof(TModel).FullName, id.ToString(),
+                "value.json");
+
+            return new IdentityWrapper<TModel>(
+                id: id,
+                value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
+        }
+
+        public void Remove(int id)
+        {
+            var path = Path.Combine(root,
+                typeof(TModel).FullName, id.ToString());
+
+            Directory.Delete(path, true);
+        }
+
+        public void Update(int id, TModel value)
+        {
+            var path = Path.Combine(root,
+                typeof(TModel).FullName, id.ToString(),
+                "value.json");
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(value));
+        }
+    }
+
+    public class CommonDataStore<TParent1, TModel> : IDataStore<TParent1, TModel>
+    {
+        private readonly string root;
+
+        public CommonDataStore(IHostingEnvironment hostEnv)
+        {
+            this.root = Path.Combine(hostEnv.WebRootPath, "..", "data");
+        }
+
+        public void Add(int parentId1, TModel value)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TModel).ToString());
+
+            Directory.CreateDirectory(path);
+
+            var id = Directory.GetDirectories(path)
+                .Select(Path.GetFileName)
+                .Concat(new[] { "0" })
+                .Max(int.Parse) + 1;
+
+            var itemPath = Path.Combine(path, id.ToString(), "value.json");
+            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
+            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
+        }
+
         public IdentityWrapper<TParent1, TModel>[] GetAll(int parentId1)
         {
             var path = Path.Combine(root,
@@ -160,6 +150,67 @@ namespace Tasky.Services
                     id: int.Parse(Path.GetFileName(d)),
                     value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(Path.Combine(d, "value.json")))))
                 .ToArray();
+        }
+
+        public IdentityWrapper<TParent1, TModel> Get(int parentId1, int id)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TModel).FullName, id.ToString(),
+                "value.json");
+
+            return new IdentityWrapper<TParent1, TModel>(
+                parentId1: parentId1,
+                id: id,
+                value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
+        }
+
+        public void Remove(int parentId1, int id)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TModel).FullName, id.ToString());
+
+            Directory.Delete(path, true);
+        }
+
+        public void Update(int parentId1, int id, TModel value)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TModel).FullName, id.ToString(),
+                "value.json");
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(value));
+        }
+    }
+
+    public class CommonDataStore<TParent1, TParent2, TModel> : IDataStore<TParent1, TParent2, TModel>
+    {
+        private readonly string root;
+
+        public CommonDataStore(IHostingEnvironment hostEnv)
+        {
+            this.root = Path.Combine(hostEnv.WebRootPath, "..", "data");
+        }
+
+        public void Add(int parentId1, int parentId2, TModel value)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TParent2).FullName, parentId2.ToString(),
+                typeof(TModel).ToString());
+
+            Directory.CreateDirectory(path);
+
+            var id = Directory.GetDirectories(path)
+                .Select(Path.GetFileName)
+                .Concat(new[] { "0" })
+                .Max(int.Parse) + 1;
+
+            var itemPath = Path.Combine(path, id.ToString(), "value.json");
+            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
+            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
         }
 
         public IdentityWrapper<TParent1, TParent2, TModel>[] GetAll(int parentId1, int parentId2)
@@ -176,6 +227,72 @@ namespace Tasky.Services
                     id: int.Parse(Path.GetFileName(d)),
                     value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(Path.Combine(d, "value.json")))))
                 .ToArray();
+        }
+
+        public IdentityWrapper<TParent1, TParent2, TModel> Get(int parentId1, int parentId2, int id)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TParent2).FullName, parentId2.ToString(),
+                typeof(TModel).FullName, id.ToString(),
+                "value.json");
+
+            return new IdentityWrapper<TParent1, TParent2, TModel>(
+                parentId1: parentId1,
+                parentId2: parentId2,
+                id: id,
+                value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
+        }
+
+        public void Remove(int parentId1, int parentId2, int id)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TParent2).FullName, parentId2.ToString(),
+                typeof(TModel).FullName, id.ToString());
+
+            Directory.Delete(path, true);
+        }
+
+        public void Update(int parentId1, int parentId2, int id, TModel value)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TParent2).FullName, parentId2.ToString(),
+                typeof(TModel).FullName, id.ToString(),
+                "value.json");
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(value));
+        }
+    }
+
+    public class CommonDataStore<TParent1, TParent2, TParent3, TModel> : IDataStore<TParent1, TParent2, TParent3, TModel>
+    {
+        private readonly string root;
+
+        public CommonDataStore(IHostingEnvironment hostEnv)
+        {
+            this.root = Path.Combine(hostEnv.WebRootPath, "..", "data");
+        }
+
+        public void Add(int parentId1, int parentId2, int parentId3, TModel value)
+        {
+            var path = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString(),
+                typeof(TParent2).FullName, parentId2.ToString(),
+                typeof(TParent3).FullName, parentId3.ToString(),
+                typeof(TModel).ToString());
+
+            Directory.CreateDirectory(path);
+
+            var id = Directory.GetDirectories(path)
+                .Select(Path.GetFileName)
+                .Concat(new[] { "0" })
+                .Max(int.Parse) + 1;
+
+            var itemPath = Path.Combine(path, id.ToString(), "value.json");
+            Directory.CreateDirectory(Path.GetDirectoryName(itemPath));
+            File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
         }
 
         public IdentityWrapper<TParent1, TParent2, TParent3, TModel>[] GetAll(int parentId1, int parentId2, int parentId3)
@@ -196,43 +313,15 @@ namespace Tasky.Services
                 .ToArray();
         }
 
-        public IdentityWrapper<TModel> Get(int id)
-        {
-            var path = Path.Combine(root,
-                typeof(TModel).FullName, id.ToString(),
-                "value.json");
-
-            return new IdentityWrapper<TModel>(
-                id: id,
-                value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
-        }
-
-        public IdentityWrapper<TParent1, TModel> Get(int parentId1, int id)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TModel).FullName, id.ToString(),
-                "value.json");
-
-            return new IdentityWrapper<TParent1, TModel>(
-                parentId1: parentId1,
-                id: id,
-                value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
-        }
-
-        public IdentityWrapper<TParent1, TParent2, TModel> Get(int parentId1, int parentId2, int id)
+        public void Remove(int parentId1, int parentId2, int parentId3, int id)
         {
             var path = Path.Combine(root,
                 typeof(TParent1).FullName, parentId1.ToString(),
                 typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TModel).FullName, id.ToString(),
-                "value.json");
+                typeof(TParent3).FullName, parentId3.ToString(),
+                typeof(TModel).FullName, id.ToString());
 
-            return new IdentityWrapper<TParent1, TParent2, TModel>(
-                parentId1: parentId1,
-                parentId2: parentId2,
-                id: id,
-                value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
+            Directory.Delete(path, true);
         }
 
         public IdentityWrapper<TParent1, TParent2, TParent3, TModel> Get(int parentId1, int parentId2, int parentId3, int id)
@@ -252,74 +341,6 @@ namespace Tasky.Services
                 value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(path)));
         }
 
-        public void Remove(int id)
-        {
-            var path = Path.Combine(root,
-                typeof(TModel).FullName, id.ToString());
-
-            Directory.Delete(path, true);
-        }
-
-        public void Remove(int parentId1, int id)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TModel).FullName, id.ToString());
-
-            Directory.Delete(path, true);
-        }
-
-        public void Remove(int parentId1, int parentId2, int id)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TModel).FullName, id.ToString());
-
-            Directory.Delete(path, true);
-        }
-
-        public void Remove(int parentId1, int parentId2, int parentId3, int id)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TParent3).FullName, parentId3.ToString(),
-                typeof(TModel).FullName, id.ToString());
-
-            Directory.Delete(path, true);
-        }
-
-        public void Update(int id, TModel value)
-        {
-            var path = Path.Combine(root,
-                typeof(TModel).FullName, id.ToString(),
-                "value.json");
-
-            File.WriteAllText(path, JsonConvert.SerializeObject(value));
-        }
-
-        public void Update(int parentId1, int id, TModel value)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TModel).FullName, id.ToString(),
-                "value.json");
-
-            File.WriteAllText(path, JsonConvert.SerializeObject(value));
-        }
-
-        public void Update(int parentId1, int parentId2, int id, TModel value)
-        {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TModel).FullName, id.ToString(),
-                "value.json");
-
-            File.WriteAllText(path, JsonConvert.SerializeObject(value));
-        }
-
         public void Update(int parentId1, int parentId2, int parentId3, int id, TModel value)
         {
             var path = Path.Combine(root,
@@ -330,40 +351,6 @@ namespace Tasky.Services
                 "value.json");
 
             File.WriteAllText(path, JsonConvert.SerializeObject(value));
-        }
-    }
-
-    public class Issue
-    {
-        [Required]
-        [MaxLength(140)]
-        public string Name { get; }
-
-        [MaxLength(2048)]
-        public string Description { get; }
-
-        public Issue(string name, string description)
-        {
-            Name = name;
-            Description = description;
-
-            var t = Tuple.Create(1);
-        }
-    }
-
-    public class Project
-    {
-        [Required]
-        [MaxLength(140)]
-        public string Name { get; }
-
-        [MaxLength(2048)]
-        public string Description { get; }
-
-        public Project(string name, string description)
-        {
-            Name = name;
-            Description = description;
         }
     }
 }

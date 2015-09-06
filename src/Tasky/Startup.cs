@@ -44,6 +44,14 @@ namespace Tasky
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // https://github.com/leastprivilege/AspNet5TemplateCookieAuthentication
+            app.UseCookieAuthentication(options =>
+            {
+                options.LoginPath = "/account/login";
+                options.AuthenticationScheme = "Cookies";
+                options.AutomaticAuthentication = true;
+            });
+
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
 

@@ -1,0 +1,211 @@
+﻿body {
+    font-family: 'Roboto', sans-serif;
+    padding: 0;
+    margin: 0;
+    background-color: #f4f5f7;
+}
+
+h1 {
+    border-bottom: #2c3137 solid 1px;
+    line-height: 100px;
+    text-align: center;
+    margin: 0;
+}
+
+.leftCol {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 240px;
+    background-color: rgb(30, 35, 41);
+    color: #bcbcbc;
+    font-size: 20px;
+    min-height: 100%;
+}
+
+.projectList {
+    padding: 0;
+    margin: 40px 20px;
+    list-style: none;
+}
+
+    .projectList > li {
+        padding: 23px 0;
+        border-bottom: #2c3137 solid 1px;
+    }
+
+    .projectList > li.active > a {
+        color: #fff;
+    }
+
+.sprintList {
+    padding: 0;
+    list-style: none;
+}
+
+    .sprintList > li {
+        margin: 20px 10px;
+    }
+
+
+        .sprintList > li.active > a {
+            color: #fff;
+        }
+
+        .sprintList > li:last-child {
+            margin-bottom: 0;
+        }
+
+.leftCol a {
+    color: #bcbcbc;
+    text-decoration: none;
+    display: block;
+}
+
+    .leftCol a:hover {
+        color: #fff;
+    }
+
+.projectList + .addButton {
+    margin: 20px;
+    display: block;
+    background: none;
+    border: #2c3137 solid 1px;
+    color: #bcbcbc;
+    font-size: 20px;
+    text-align: center;
+    padding: 16px;
+}
+
+.addButton:before {
+    content: '+';
+    margin-right: 10px;
+}
+
+.main {
+    margin-left: 240px;
+}
+
+.main-header {
+    line-height: 100px;
+    font-size: 30px;
+    color:#90989b;
+    border-bottom: #bcbcbc solid 1px;
+    background-color: #fff;
+}
+
+    .main-header > span:first-child {
+        margin-left: 40px;
+    }
+
+    .main-header > span:before {
+        content: '>';
+        margin: 0 10px;
+    }
+
+    .main-header > span:first-child:before {
+        display: none;
+    }
+
+.main-content {
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.itemList {
+    float: left;
+    margin: 20px;
+    background-color: #fff;
+    width: 300px;
+}
+
+.itemList-header {
+    height: 30px;
+    line-height: 30px;
+    background-color: #48c3ff;
+    color: #fff;
+    padding: 20px;
+    font-size: 20px;
+}
+
+    .itemList-header > h3 {
+        margin: 0;
+    }
+
+.itemList-content {
+    padding-top: 20px;
+    border-left: #eee solid 1px;
+    border-right: #eee solid 1px;
+}
+
+    .itemList-content.noFooter {
+        border-bottom: #eee solid 1px;
+    }
+
+.itemList-item {
+    margin: 20px;
+    padding-bottom: 10px;
+    border-bottom: #eee solid 1px;
+}
+
+    .itemList-item:first-child {
+        margin-top: 0;
+    }
+    .itemList-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .itemList-item > a {
+        font-weight: lighter;
+        font-size: 20px;
+        color: #1e2329;
+        text-decoration: none;
+        display: block;
+    }
+
+.itemList-content {
+}
+
+.itemList-item-footer {
+    color: #d3dae2;
+    margin-top: 10px;
+}
+
+    .itemList-item-footer > span {
+        margin-right: 20px;
+    }
+
+.itemList-comments:before {
+    content: "\1F4AC";
+    margin-right: 10px;
+}
+
+.itemList-comments:hover:before {
+    color: #48c3ff;
+}
+
+.itemList-attachments:before {
+    content: "\1F4CE";
+    margin-right: 5px;
+}
+
+.blackButton {
+    text-decoration: none;
+    display: block;
+    background: #1e2329;
+    color: #bcbcbc;
+    font-size: 20px;
+    text-align: center;
+    padding: 16px;
+}
+
+    .blackButton:before {
+        content: '+';
+        margin-right: 10px;
+    }
+
+    .blackButton:hover {
+        color: #fff;
+    }

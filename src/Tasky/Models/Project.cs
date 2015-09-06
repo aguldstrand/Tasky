@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tasky.Models
 {
@@ -11,10 +12,14 @@ namespace Tasky.Models
         [StringLength(2000)]
         public string Description { get; }
 
-        public Project(string name, string description)
+        [Required]
+        public ImmutableHashSet<AccessEntry> AccessControl { get; }
+
+        public Project(string name, string description, ImmutableHashSet<AccessEntry> accessControl)
         {
             Name = name;
             Description = description;
+            AccessControl = accessControl;
         }
     }
 }

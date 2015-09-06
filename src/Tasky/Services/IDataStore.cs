@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNet.Hosting;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
 namespace Tasky.Services
 {
-
     public interface IDataStore<TModel>
     {
-        IdentityWrapper<TModel>[] GetAll();
+        ImmutableArray<IdentityWrapper<TModel>> GetAll();
         IdentityWrapper<TModel> Get(int id);
         void Add(TModel value);
         void Update(int id, TModel value);
@@ -19,7 +19,7 @@ namespace Tasky.Services
 
     public interface IDataStore<TParent1, TModel>
     {
-        IdentityWrapper<TParent1, TModel>[] GetAll(int parentId1);
+        ImmutableArray<IdentityWrapper<TParent1, TModel>> GetAll(int parentId1);
         IdentityWrapper<TParent1, TModel> Get(int parentId1, int id);
         void Add(int parentId1, TModel value);
         void Update(int parentId1, int id, TModel value);
@@ -28,7 +28,7 @@ namespace Tasky.Services
 
     public interface IDataStore<TParent1, TParent2, TModel>
     {
-        IdentityWrapper<TParent1, TParent2, TModel>[] GetAll(int parentId1, int parentId2);
+        ImmutableArray<IdentityWrapper<TParent1, TParent2, TModel>> GetAll(int parentId1, int parentId2);
         IdentityWrapper<TParent1, TParent2, TModel> Get(int parentId1, int parentId2, int id);
         void Add(int parentId1, int parentId2, TModel value);
         void Update(int parentId1, int parentId2, int id, TModel value);
@@ -37,7 +37,7 @@ namespace Tasky.Services
 
     public interface IDataStore<TParent1, TParent2, TParent3, TModel>
     {
-        IdentityWrapper<TParent1, TParent2, TParent3, TModel>[] GetAll(int parentId1, int parentId2, int parentId3);
+        ImmutableArray<IdentityWrapper<TParent1, TParent2, TParent3, TModel>> GetAll(int parentId1, int parentId2, int parentId3);
         IdentityWrapper<TParent1, TParent2, TParent3, TModel> Get(int parentId1, int parentId2, int parentId3, int id);
         void Add(int parentId1, int parentId2, int parentId3, TModel value);
         void Update(int parentId1, int parentId2, int parentId3, int id, TModel value);
@@ -70,16 +70,18 @@ namespace Tasky.Services
             File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
         }
 
-        public IdentityWrapper<TModel>[] GetAll()
+        public ImmutableArray<IdentityWrapper<TModel>> GetAll()
         {
             var path = Path.Combine(root,
                 typeof(TModel).ToString());
+
+            Directory.CreateDirectory(path);
 
             return Directory.GetDirectories(path)
                 .Select(d => new IdentityWrapper<TModel>(
                     id: int.Parse(Path.GetFileName(d)),
                     value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(Path.Combine(d, "value.json")))))
-                .ToArray();
+                .ToImmutableArray();
         }
 
         public IdentityWrapper<TModel> Get(int id)
@@ -122,10 +124,15 @@ namespace Tasky.Services
 
         public void Add(int parentId1, TModel value)
         {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TModel).ToString());
+            var parentPath = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString());
 
+            if (!Directory.Exists(parentPath))
+            {
+                throw new Exception("Parent item not found.");
+            }
+
+            var path = Path.Combine(parentPath, typeof(TModel).ToString());
             Directory.CreateDirectory(path);
 
             var id = Directory.GetDirectories(path)
@@ -138,18 +145,25 @@ namespace Tasky.Services
             File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
         }
 
-        public IdentityWrapper<TParent1, TModel>[] GetAll(int parentId1)
+        public ImmutableArray<IdentityWrapper<TParent1, TModel>> GetAll(int parentId1)
         {
-            var path = Path.Combine(root,
-                typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TModel).ToString());
+            var parentPath = Path.Combine(root,
+                typeof(TParent1).FullName, parentId1.ToString());
+
+            if (!Directory.Exists(parentPath))
+            {
+                throw new Exception("Parent item not found.");
+            }
+
+            var path = Path.Combine(parentPath, typeof(TModel).ToString());
+            Directory.CreateDirectory(path);
 
             return Directory.GetDirectories(path)
                 .Select(d => new IdentityWrapper<TParent1, TModel>(
                     parentId1: parentId1,
                     id: int.Parse(Path.GetFileName(d)),
                     value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(Path.Combine(d, "value.json")))))
-                .ToArray();
+                .ToImmutableArray();
         }
 
         public IdentityWrapper<TParent1, TModel> Get(int parentId1, int id)
@@ -196,11 +210,16 @@ namespace Tasky.Services
 
         public void Add(int parentId1, int parentId2, TModel value)
         {
-            var path = Path.Combine(root,
+            var parentPath = Path.Combine(root,
                 typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TModel).ToString());
+                typeof(TParent2).FullName, parentId2.ToString());
 
+            if (!Directory.Exists(parentPath))
+            {
+                throw new Exception("Parent item not found.");
+            }
+
+            var path = Path.Combine(parentPath, typeof(TModel).ToString());
             Directory.CreateDirectory(path);
 
             var id = Directory.GetDirectories(path)
@@ -213,12 +232,19 @@ namespace Tasky.Services
             File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
         }
 
-        public IdentityWrapper<TParent1, TParent2, TModel>[] GetAll(int parentId1, int parentId2)
+        public ImmutableArray<IdentityWrapper<TParent1, TParent2, TModel>> GetAll(int parentId1, int parentId2)
         {
-            var path = Path.Combine(root,
+            var parentPath = Path.Combine(root,
                 typeof(TParent1).FullName, parentId1.ToString(),
-                typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TModel).ToString());
+                typeof(TParent2).FullName, parentId2.ToString());
+
+            if (!Directory.Exists(parentPath))
+            {
+                throw new Exception("Parent item not found.");
+            }
+
+            var path = Path.Combine(parentPath, typeof(TModel).ToString());
+            Directory.CreateDirectory(path);
 
             return Directory.GetDirectories(path)
                 .Select(d => new IdentityWrapper<TParent1, TParent2, TModel>(
@@ -226,7 +252,7 @@ namespace Tasky.Services
                     parentId2: parentId2,
                     id: int.Parse(Path.GetFileName(d)),
                     value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(Path.Combine(d, "value.json")))))
-                .ToArray();
+                .ToImmutableArray();
         }
 
         public IdentityWrapper<TParent1, TParent2, TModel> Get(int parentId1, int parentId2, int id)
@@ -277,12 +303,17 @@ namespace Tasky.Services
 
         public void Add(int parentId1, int parentId2, int parentId3, TModel value)
         {
-            var path = Path.Combine(root,
+            var parentPath = Path.Combine(root,
                 typeof(TParent1).FullName, parentId1.ToString(),
                 typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TParent3).FullName, parentId3.ToString(),
-                typeof(TModel).ToString());
+                typeof(TParent3).FullName, parentId3.ToString());
 
+            if (!Directory.Exists(parentPath))
+            {
+                throw new Exception("Parent item not found.");
+            }
+
+            var path = Path.Combine(parentPath, typeof(TModel).ToString());
             Directory.CreateDirectory(path);
 
             var id = Directory.GetDirectories(path)
@@ -295,13 +326,20 @@ namespace Tasky.Services
             File.WriteAllText(itemPath, JsonConvert.SerializeObject(value));
         }
 
-        public IdentityWrapper<TParent1, TParent2, TParent3, TModel>[] GetAll(int parentId1, int parentId2, int parentId3)
+        public ImmutableArray<IdentityWrapper<TParent1, TParent2, TParent3, TModel>> GetAll(int parentId1, int parentId2, int parentId3)
         {
-            var path = Path.Combine(root,
+            var parentPath = Path.Combine(root,
                 typeof(TParent1).FullName, parentId1.ToString(),
                 typeof(TParent2).FullName, parentId2.ToString(),
-                typeof(TParent3).FullName, parentId3.ToString(),
-                typeof(TModel).ToString());
+                typeof(TParent3).FullName, parentId3.ToString());
+
+            if (!Directory.Exists(parentPath))
+            {
+                throw new Exception("Parent item not found.");
+            }
+
+            var path = Path.Combine(parentPath, typeof(TModel).ToString());
+            Directory.CreateDirectory(path);
 
             return Directory.GetDirectories(path)
                 .Select(d => new IdentityWrapper<TParent1, TParent2, TParent3, TModel>(
@@ -310,7 +348,7 @@ namespace Tasky.Services
                     parentId3: parentId3,
                     id: int.Parse(Path.GetFileName(d)),
                     value: JsonConvert.DeserializeObject<TModel>(File.ReadAllText(Path.Combine(d, "value.json")))))
-                .ToArray();
+                .ToImmutableArray();
         }
 
         public void Remove(int parentId1, int parentId2, int parentId3, int id)

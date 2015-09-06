@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 
 namespace Tasky.Models
 {
@@ -17,12 +18,16 @@ namespace Tasky.Models
         [Required]
         public int Assignee { get; }
 
-        public Issue(string name, string description, int author, int assignee)
+        [Required]
+        public ImmutableHashSet<int> Attachments { get; }
+
+        public Issue(string name, string description, int author, int assignee, ImmutableHashSet<int> attachments)
         {
             Name = name;
             Description = description;
             Author = author;
             Assignee = assignee;
+            Attachments = attachments;
         }
     }
 }

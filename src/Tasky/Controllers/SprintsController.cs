@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc;
+using System.Collections.Immutable;
 using Tasky.Filters;
 using Tasky.Models;
 using Tasky.Services;
@@ -17,7 +18,7 @@ namespace Tasky.Controllers
         }
 
         [HttpGet]
-        public IdentityWrapper<Project, Sprint>[] Get(int projectId)
+        public ImmutableArray<IdentityWrapper<Project, Sprint>> Get(int projectId)
         {
             return store.GetAll(projectId);
         }

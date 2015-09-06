@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 
 namespace Tasky.Models
@@ -9,9 +9,11 @@ namespace Tasky.Models
         [StringLength(140, MinimumLength = 1)]
         public string Name { get; }
 
-        public HashSet<int> Users { get; }
+        [Required]
+        [MinLength(0)]
+        public ImmutableHashSet<int> Users { get; }
 
-        public UserGroup(string name, HashSet<int> users)
+        public UserGroup(string name, ImmutableHashSet<int> users)
         {
             Name = name;
             Users = users;

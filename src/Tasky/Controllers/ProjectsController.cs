@@ -2,6 +2,7 @@
 using Tasky.Services;
 using Tasky.Filters;
 using Tasky.Models;
+using System.Collections.Immutable;
 
 namespace Tasky.Controllers
 {
@@ -17,7 +18,7 @@ namespace Tasky.Controllers
         }
 
         [HttpGet]
-        public IdentityWrapper<Project>[] Get()
+        public ImmutableArray<IdentityWrapper<Project>> Get()
         {
             return store.GetAll();
         }

@@ -5,10 +5,10 @@ namespace Tasky.Models
     public class Project
     {
         [Required]
-        [MaxLength(140)]
+        [StringLength(140, MinimumLength = 1)]
         public string Name { get; }
 
-        [MaxLength(2000)]
+        [StringLength(2000)]
         public string Description { get; }
 
         public Project(string name, string description)

@@ -15,12 +15,14 @@ h1 {
 .leftCol {
     position: absolute;
     top: 0;
-    left: 0;
+    left: -240px;
     width: 240px;
     background-color: rgb(30, 35, 41);
     color: #bcbcbc;
     font-size: 20px;
     min-height: 100%;
+
+    transition: left .2s ease-in;
 }
 
 .projectList {
@@ -83,7 +85,8 @@ h1 {
 }
 
 .main {
-    margin-left: 240px;
+    margin-left: 0;
+    transition: margin-left .2s ease-in;
 }
 
 .main-header {
@@ -107,17 +110,31 @@ h1 {
         display: none;
     }
 
-.main-content {
-    padding: 20px;
-    display: flex;
-    flex-wrap: wrap;
+.currentUser {
+    float: right;
+    margin-right: 40px;
+    font-size: 20px;
+    color: #1e2329;
 }
 
+.currentUser-initials {
+    margin-left: 20px;
+    padding: 7px 15px;
+    background-color: #99c939;
+    color: #fff;
+}
+
+.main-content {
+    padding: 20px;
+}
+
+    .main-content > div {
+        flex-grow: 1;
+    }
+
 .itemList {
-    float: left;
     margin: 20px;
     background-color: #fff;
-    width: 300px;
 }
 
 .itemList-header {
@@ -147,6 +164,7 @@ h1 {
     margin: 20px;
     padding-bottom: 10px;
     border-bottom: #eee solid 1px;
+    overflow: hidden;
 }
 
     .itemList-item:first-child {
@@ -175,6 +193,9 @@ h1 {
 
     .itemList-item-footer > span {
         margin-right: 20px;
+        line-height: 30px;
+        height: 30px;
+        margin-bottom: 5px;
     }
 
 .itemList-comments:before {
@@ -189,6 +210,14 @@ h1 {
 .itemList-attachments:before {
     content: "\1F4CE";
     margin-right: 5px;
+}
+
+.itemList-assignee {
+    float: right;
+    background: #ffbc2f;
+    padding: 0 5px;
+    color: #fff;
+    margin-right: 0;
 }
 
 .blackButton {
@@ -209,3 +238,22 @@ h1 {
     .blackButton:hover {
         color: #fff;
     }
+
+@media (min-width : 640px) {
+    .leftCol {
+        left: 0;
+    }
+
+    .main {
+        margin-left: 240px;
+    }
+
+    .itemList {
+        min-width: 300px;
+    }
+
+    .main-content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}

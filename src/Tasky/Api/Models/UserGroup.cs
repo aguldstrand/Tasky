@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
 
-namespace Tasky.Models
+namespace Tasky.Api.Models
 {
     public class UserGroup
     {

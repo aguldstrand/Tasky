@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tasky.Models
+namespace Tasky.Api.Models
 {
     public class Issue
     {
@@ -17,12 +17,16 @@ namespace Tasky.Models
         [Required]
         public int Assignee { get; }
 
-        public Issue(string name, string description, int author, int assignee)
+        [Required]
+        public IssueState State { get; }
+
+        public Issue(string name, string description, int author, int assignee, IssueState state)
         {
             Name = name;
             Description = description;
             Author = author;
             Assignee = assignee;
+            State = state;
         }
     }
 }

@@ -9,8 +9,8 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
 using Tasky.Services;
-using Tasky.Models;
-using Tasky.Controllers;
+using Tasky.Api.Models;
+using Tasky.Api.Controllers;
 
 namespace Tasky
 {

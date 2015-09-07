@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNet.Mvc;
 using System.Collections.Immutable;
-using Tasky.Models;
+using Tasky.Api.Models;
 using Tasky.Services;
 using Tasky.ViewModels.Home;
 
-namespace Tasky.Controllers
+namespace Tasky.Api.Controllers
 {
     [Route("/")]
     public class HomeController : Controller

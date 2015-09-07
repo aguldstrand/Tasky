@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using Tasky.Models;
+using Tasky.Api.Models;
 using Tasky.Services;
 
 namespace Tasky.ViewModels.Home

@@ -6,11 +6,11 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Tasky.Api.Models;
 using Tasky.Filters;
-using Tasky.Models;
 using Tasky.Services;
 
-namespace Tasky.Controllers
+namespace Tasky.Api.Controllers
 {
     [Route("api/users")]
     [ValidateModel]

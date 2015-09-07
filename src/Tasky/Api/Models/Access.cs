@@ -1,4 +1,4 @@
-﻿namespace Tasky.Models
+﻿namespace Tasky.Api.Models
 {
     public enum Access
     {

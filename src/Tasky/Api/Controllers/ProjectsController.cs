@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNet.Mvc;
-using Tasky.Services;
-using Tasky.Filters;
-using Tasky.Models;
 using System.Collections.Immutable;
+using Tasky.Api.Models;
+using Tasky.Filters;
+using Tasky.Services;
 
-namespace Tasky.Controllers
+namespace Tasky.Api.Controllers
 {
     [Route("api/projects")]
     [ValidateModel]

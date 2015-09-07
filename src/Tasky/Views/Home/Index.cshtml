@@ -1,4 +1,5 @@
-﻿@model Tasky.ViewModels.Home.Index
+﻿@model Tasky.ViewModels.Home.IndexVM
+@using Tasky.Api.Models
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,13 +14,13 @@
             @foreach (var project in Model.Projects)
             {
                 <li class="@(Model.Project == project.Id ? "active" : "")" data-project="@project.Id">
-                    <a href="#">@project.Value.Name</a>
+                    <a href="?project=@project.Id">@project.Value.Name</a>
                     @if (Model.Project == project.Id)
                     {
                         <ul class="sprintList">
                             @foreach (var sprint in Model.Sprints)
                             {
-                                <li class="@(Model.Sprint == sprint.Id ? "active" : "")" data-sprint="@sprint.Id"><a href="#">@sprint.Value.Name</a></li>
+                                <li class="@(Model.Sprint == sprint.Id ? "active" : "")" data-sprint="@sprint.Id"><a href="?project=@project.Id&sprint=@sprint.Id">@sprint.Value.Name</a></li>
                             }
                         </ul>
                     }
@@ -46,32 +47,19 @@
                         <h3>To Do</h3>
                     </div>
                     <div class="itemList-content">
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">23</span>
-                                <span class="itemList-attachments">3</span>
+                        @foreach (var item in Model.Issues.Where(i => i.Issue.Value.State == IssueState.Todo))
+                        {
+                            <div class="itemList-item">
+                                <a href="#">@item.Issue.Value.Name</a>
+                                <div class="itemList-item-footer">
+                                    <span class="itemList-comments">@item.Comments</span>
+                                    @if (item.Attachments != 0)
+                                    {
+                                        <span class="itemList-attachments">@item.Attachments</span>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">4</span>
-                                <span class="itemList-attachments">1</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                            </div>
-                        </div>
+                        }
                     </div>
                     <div class="itemList-footer">
                         <a class="blackButton" href="#">Add Issue</a>
@@ -85,36 +73,20 @@
                         <h3>In progress</h3>
                     </div>
                     <div class="itemList-content noFooter">
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">23</span>
-                                <span class="itemList-attachments">3</span>
-                                <span class="itemList-assignee">AG</span>
+                        @foreach (var item in Model.Issues.Where(i => i.Issue.Value.State == IssueState.InProgress))
+                        {
+                            <div class="itemList-item">
+                                <a href="#">@item.Issue.Value.Name</a>
+                                <div class="itemList-item-footer">
+                                    <span class="itemList-comments">@item.Comments</span>
+                                    @if (item.Attachments != 0)
+                                    {
+                                        <span class="itemList-attachments">@item.Attachments</span>
+                                    }
+                                    <span class="itemList-assignee">@item.Assignee</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                                <span class="itemList-assignee">AG</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">4</span>
-                                <span class="itemList-attachments">1</span>
-                                <span class="itemList-assignee">AG</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                                <span class="itemList-assignee">AG</span>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -125,36 +97,20 @@
                         <h3>Ready for test</h3>
                     </div>
                     <div class="itemList-content noFooter">
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">23</span>
-                                <span class="itemList-attachments">3</span>
-                                <span class="itemList-assignee">AG</span>
+                        @foreach (var item in Model.Issues.Where(i => i.Issue.Value.State == IssueState.ReadyForTest))
+                        {
+                            <div class="itemList-item">
+                                <a href="#">@item.Issue.Value.Name</a>
+                                <div class="itemList-item-footer">
+                                    <span class="itemList-comments">@item.Comments</span>
+                                    @if (item.Attachments != 0)
+                                    {
+                                        <span class="itemList-attachments">@item.Attachments</span>
+                                    }
+                                    <span class="itemList-assignee">@item.Assignee</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                                <span class="itemList-assignee">AG</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">4</span>
-                                <span class="itemList-attachments">1</span>
-                                <span class="itemList-assignee">AG</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                                <span class="itemList-assignee">AG</span>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -165,32 +121,19 @@
                         <h3>Done</h3>
                     </div>
                     <div class="itemList-content noFooter">
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">23</span>
-                                <span class="itemList-attachments">3</span>
+                        @foreach (var item in Model.Issues.Where(i => i.Issue.Value.State == IssueState.InProgress))
+                        {
+                            <div class="itemList-item">
+                                <a href="#">@item.Issue.Value.Name</a>
+                                <div class="itemList-item-footer">
+                                    <span class="itemList-comments">@item.Comments</span>
+                                    @if (item.Attachments != 0)
+                                    {
+                                        <span class="itemList-attachments">@item.Attachments</span>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">4</span>
-                                <span class="itemList-attachments">1</span>
-                            </div>
-                        </div>
-                        <div class="itemList-item">
-                            <a href="#">Screenshots design</a>
-                            <div class="itemList-item-footer">
-                                <span class="itemList-comments">0</span>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
             </div>

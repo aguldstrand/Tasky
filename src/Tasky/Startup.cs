@@ -38,6 +38,7 @@ namespace Tasky
             services.AddTransient<IssuesController>();
             services.AddTransient<CommentsController>();
             services.AddTransient<AttachmentsController>();
+            services.AddTransient<UsersController>();
 
             services.AddMvc();
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
